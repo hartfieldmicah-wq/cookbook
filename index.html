@@ -751,5 +751,8 @@ document.addEventListener('gesturestart',function(e){e.preventDefault()});
 
 setTab('home');
 </script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}})}
+</script>
 </body>
 </html>
