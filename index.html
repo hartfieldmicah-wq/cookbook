@@ -355,7 +355,7 @@ var ALLNAMES=Object.keys(ALLING).sort();
 var COMMON=ALLNAMES.filter(function(n){return PANTRY.indexOf(n)<0}).sort(function(a,b){return ALLING[b]-ALLING[a]}).slice(0,36);
 
 /* ---------- state ---------- */
-var ST={tab:'home',cat:'All',meal:'',cui:'',diet:'',toolsOnly:false,kmeal:'',useTools:true,toolsOpen:true,tools:{stovetop:1,oven:1,microwave:1,toaster:1,blender:1,grill:0,airfryer:0,slowcooker:0,instantpot:0,processor:0},lim:50,q:'',fridge:[],favs:[],pantry:true,openId:null,serv:0,ichk:{},schk:{}};
+var ST={tab:'home',cat:'All',meal:'',cui:'',diet:'',toolsOnly:false,kmeal:'',kcui:'',useTools:true,toolsOpen:true,tools:{stovetop:1,oven:1,microwave:1,toaster:1,blender:1,grill:0,airfryer:0,slowcooker:0,instantpot:0,processor:0},lim:50,q:'',fridge:[],favs:[],pantry:true,openId:null,serv:0,ichk:{},schk:{}};
 try{
   var sv=JSON.parse(localStorage.getItem('cookbook_state')||'{}');
   if(sv.fridge)ST.fridge=sv.fridge;
@@ -468,6 +468,7 @@ function fridgeResults(){
   RECIPES.forEach(function(r){
     if(ST.useTools&&!toolsOk(r))return;
     if(ST.kmeal&&r.tags.indexOf(ST.kmeal)<0)return;
+    if(ST.kcui&&r.tags.indexOf(ST.kcui)<0)return;
     var need=r.ing.filter(function(i){return !(ST.pantry&&i.pantry)&&i.q!==''});
     if(!need.length)return;
     var have=[],miss=[];
@@ -489,7 +490,7 @@ function renderFridge(){
    '<button type="button" class="btn" data-a="addTyped" style="padding:0 18px">Add</button></div>'+
    '<div class="chips" id="fsug"></div>'+
    '<div class="chips" id="fchips"></div>'+
-   '<div id="fctl"></div><div class="chips scroll" id="kmealchips" style="margin-top:8px"></div><div id="fres"></div>';
+   '<div id="fctl"></div><div class="chips scroll" id="kmealchips" style="margin-top:8px"></div><div class="chips scroll" id="kcuichips" style="margin-top:6px"></div><div id="fres"></div>';
   $('s-fridge').innerHTML=h;
   drawFridgeTop();drawFridgeRes();
 }
@@ -522,6 +523,7 @@ function drawFridgeTop(){
   $('fctl').innerHTML='<div class="toggle" role="button" tabindex="0" data-a="pantry"><span class="sw'+(ST.pantry?' on':'')+'"></span><span>Assume I have salt, pepper, oil, water, ice &amp; basic spices</span></div>'+
    (ST.fridge.length?'<div style="margin-top:10px"><button type="button" class="btn ghost sm" data-a="clearFridge">Clear all</button></div>':'');
   var km=$('kmealchips');if(km)km.innerHTML=ST.fridge.length?chipRow(MEALCHIPS,'kmeal',ST.kmeal):'';
+  var kc=$('kcuichips');if(kc)kc.innerHTML=ST.fridge.length?chipRow(CUISINES.map(function(c){return [c[0],c[1]+' '+c[2]]}),'kcui',ST.kcui):'';
 }
 function drawFridgeRes(){
   var el=$('fres');if(!el)return;
@@ -649,6 +651,7 @@ function act(el){
     case 'cat':ST.cat=v;ST.lim=50;if(ST.tab!=='search'){ST.q='';ST.meal='';ST.cui='';ST.diet='';setTab('search')}else{drawCatChips();drawResults()}break;
     case 'filt':{var p=v.split(':'),g=p[0],val=p[1];
       if(g==='kmeal'){ST.kmeal=(ST.kmeal===val?'':val);drawFridgeTop();drawFridgeRes()}
+      else if(g==='kcui'){ST.kcui=(ST.kcui===val?'':val);drawFridgeTop();drawFridgeRes()}
       else{ST[g]=(ST[g]===val?'':val);ST.lim=50;drawCatChips();drawResults()}
       break}
     case 'filtGo':{var p2=v.split(':');ST.meal='';ST.cui='';ST.diet='';ST.cat='All';ST.q='';ST.toolsOnly=false;ST[p2[0]]=p2[1];ST.lim=50;setTab('search');break}

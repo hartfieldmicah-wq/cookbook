@@ -1,5 +1,5 @@
 /* Cookbook offline service worker. Bump VERSION when you want phones to refresh everything. */
-var VERSION='cookbook-v5';
+var VERSION='cookbook-v6';
 var CORE=['./','index.html','recipes.js','manifest.webmanifest','icon-180.png','icon-512.png'];
 for(var i=1;i<=40;i++)CORE.push('pack-'+(i<10?'0':'')+i+'.js');
 
