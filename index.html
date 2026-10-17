@@ -143,6 +143,8 @@ input{font:inherit;color:inherit;-webkit-appearance:none;appearance:none;-webkit
 .stp.done .num{background:var(--ok)}
 .stp.done .tx{opacity:.5}
 .dbody h3{font-size:19px;margin:22px 0 4px}
+.toolhead{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:2px 0 6px;font-size:15px}
+.toolhead span{color:var(--mute);font-size:13px;font-weight:600}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
   background:#2B1B12;color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;
   transition:all .2s;z-index:99;max-width:90%}
@@ -158,7 +160,7 @@ input{font:inherit;color:inherit;-webkit-appearance:none;appearance:none;-webkit
   <nav class="tabs" id="tabs">
     <button type="button" class="tab on" data-a="tab" data-v="home"><span class="ti">🏠</span>Home</button>
     <button type="button" class="tab" data-a="tab" data-v="search"><span class="ti">🔎</span>Search</button>
-    <button type="button" class="tab" data-a="tab" data-v="fridge"><span class="ti">🧊</span>Fridge</button>
+    <button type="button" class="tab" data-a="tab" data-v="fridge"><span class="ti">🍳</span>Kitchen</button>
     <button type="button" class="tab" data-a="tab" data-v="saved"><span class="ti">❤️</span>Saved</button>
   </nav>
   <section id="detail" aria-label="Recipe"></section>
@@ -187,6 +189,36 @@ R=function(c,n,e,t,s,ing,st,tags){
 <script src="pack-08.js"></script>
 <script src="pack-09.js"></script>
 <script src="pack-10.js"></script>
+<script src="pack-11.js"></script>
+<script src="pack-12.js"></script>
+<script src="pack-13.js"></script>
+<script src="pack-14.js"></script>
+<script src="pack-15.js"></script>
+<script src="pack-16.js"></script>
+<script src="pack-17.js"></script>
+<script src="pack-18.js"></script>
+<script src="pack-19.js"></script>
+<script src="pack-20.js"></script>
+<script src="pack-21.js"></script>
+<script src="pack-22.js"></script>
+<script src="pack-23.js"></script>
+<script src="pack-24.js"></script>
+<script src="pack-25.js"></script>
+<script src="pack-26.js"></script>
+<script src="pack-27.js"></script>
+<script src="pack-28.js"></script>
+<script src="pack-29.js"></script>
+<script src="pack-30.js"></script>
+<script src="pack-31.js"></script>
+<script src="pack-32.js"></script>
+<script src="pack-33.js"></script>
+<script src="pack-34.js"></script>
+<script src="pack-35.js"></script>
+<script src="pack-36.js"></script>
+<script src="pack-37.js"></script>
+<script src="pack-38.js"></script>
+<script src="pack-39.js"></script>
+<script src="pack-40.js"></script>
 <script>
 /* ---------- display settings ---------- */
 var CATS=[['Breakfast','🍳'],['Mains','🍗'],['Pasta & Rice','🍝'],['Soups','🍲'],['Salads','🥗'],['Sides','🥔'],['Sauces & Dips','🫙'],['Snacks','🧀'],['Baking','🍪'],['Desserts','🍰'],['Appetizers','🥟'],['Seafood','🐟'],['Drinks','🥤']];
@@ -209,30 +241,110 @@ RECIPES.forEach(function(r){
   r.nt=toks(r.n);
   r.ing.forEach(function(i){i.tk=toks(i.n);i.pantry=PANTRY.indexOf(i.n)>-1});
 });
-/* ---------- automatic tags (cuisine, diet, quick) ---------- */
-var CUIS=['mexican','italian','asian','indian','mediterranean','american','french'];
-var RE_MEAT=/\b(chicken|beef|pork|bacon|sausage|ham|turkey|lamb|steak|shrimp|salmon|tuna|fish|crab|clam|clams|anchovy|anchovies|prosciutto|pepperoni|salami|chorizo|brisket|ribs|meatball|duck|veal|cod|tilapia|scallop|lobster|oyster|worcestershire|gelatin|lard|hot dog|canadian bacon|ribeye|sirloin|flank)\b/;
-var RE_ANIMAL=/\b(egg|eggs|milk|butter|cheese|cream|yogurt|honey|mayonnaise|parmesan|mozzarella|ricotta|buttermilk|ghee|whey|ice cream|custard|paneer|mascarpone|marshmallows|yolks|whites)\b/;
-var RE_PLANT=/(coconut|almond|oat|soy|cashew) (milk|cream|yogurt)|peanut butter|cocoa butter|coconut butter|butter bean|butternut|cream of tartar|eggplant/g;
-var RE_PROT=/\b(chicken|beef|turkey|pork|steak|salmon|tuna|shrimp|cod|tilapia|lentil|lentils|tofu|tempeh|protein powder|cottage cheese|greek yogurt|egg|eggs|crab|ham|lamb|chickpea|chickpeas)\b/;
+/* ---------- automatic tags (meal, cuisine, diet, tools) ---------- */
+var CUISINES=[['mexican','🇲🇽','Mexican'],['italian','🇮🇹','Italian'],['american','🇺🇸','American'],['southern','🍗','Southern & Soul'],['cajun','🦐','Cajun & Creole'],
+ ['french','🇫🇷','French'],['spanish','🇪🇸','Spanish'],['greek','🇬🇷','Greek'],['middle-eastern','🧆','Middle Eastern'],['turkish','🇹🇷','Turkish'],['moroccan','🇲🇦','Moroccan'],
+ ['ethiopian','🇪🇹','Ethiopian'],['west-african','🌍','West African'],['indian','🇮🇳','Indian'],['chinese','🇨🇳','Chinese'],['japanese','🇯🇵','Japanese'],['korean','🇰🇷','Korean'],
+ ['thai','🇹🇭','Thai'],['vietnamese','🇻🇳','Vietnamese'],['filipino','🇵🇭','Filipino'],['southeast-asian','🌴','Southeast Asian'],['caribbean','🏝️','Caribbean'],
+ ['latin-american','🌎','Latin American'],['brazilian','🇧🇷','Brazilian'],['peruvian','🇵🇪','Peruvian'],['german','🇩🇪','German'],['polish','🇵🇱','Eastern European'],
+ ['british','🇬🇧','British'],['irish','🇮🇪','Irish'],['scandinavian','🇸🇪','Scandinavian'],['hawaiian','🌺','Hawaiian'],['asian','🥢','Asian (all)'],['mediterranean','🫒','Mediterranean (all)']];
+var CUIS=CUISINES.map(function(c){return c[0]});
+var ASIA=['chinese','japanese','korean','thai','vietnamese','filipino','southeast-asian'];
+var MEDI=['greek','spanish','middle-eastern','turkish','moroccan'];
+var MEALS=['breakfast','lunch','dinner','snack','dessert'];
+var MEALCHIPS=[['breakfast','🌅 Breakfast'],['lunch','🥪 Lunch'],['dinner','🍽️ Dinner'],['snack','🍿 Snacks'],['dessert','🍰 Dessert']];
+var DIETCHIPS=[['high-protein','💪 High-protein'],['vegetarian','🥦 Vegetarian'],['vegan','🌱 Vegan'],['quick','⚡ Under 30 min']];
+var TOOLS=[['stovetop','🔥','Stovetop'],['oven','♨️','Oven'],['microwave','📡','Microwave'],['toaster','🍞','Toaster'],['grill','🥩','Grill'],['airfryer','💨','Air fryer'],['slowcooker','🍲','Slow cooker'],['instantpot','⚡','Instant Pot'],['blender','🌀','Blender'],['processor','⚙️','Food processor']];
+var TOOLNAME={};TOOLS.forEach(function(t){TOOLNAME[t[0]]=t[1]+' '+t[2]});
+var RE_MEAT=/\b(chicken|beef|pork|bacon|sausage|ham|turkey|lamb|steak|shrimp|salmon|tuna|fish|crab|clam|clams|anchovy|anchovies|prosciutto|pepperoni|salami|chorizo|brisket|ribs|meatball|duck|veal|cod|tilapia|scallop|lobster|oyster|worcestershire|gelatin|lard|hot dog|canadian bacon|ribeye|sirloin|flank|mutton|goat|oxtail|snapper|halibut|mahi|trout|sardines?|squid|octopus|mussels|prawns?|lamb|venison|bone broth|pancetta|guanciale|mortadella|liverwurst|bratwurst|kielbasa|andouille|spam)\b/;
+var RE_ANIMAL=/\b(egg|eggs|milk|butter|cheese|cream|yogurt|honey|mayonnaise|parmesan|mozzarella|ricotta|buttermilk|ghee|whey|ice cream|custard|paneer|mascarpone|marshmallows|yolks|whites|feta|gouda|brie|cheddar|gruyere|halloumi|labneh|kefir|condensed milk)\b/;
+var RE_PLANT=/(coconut|almond|oat|soy|cashew|rice) (milk|cream|yogurt)|peanut butter|almond butter|cocoa butter|coconut butter|butter bean|butternut|cream of tartar|eggplant|vegan (butter|cheese|mayo)|nutritional yeast|coconut cream|sunflower butter/g;
+var RE_PROT=/\b(chicken|beef|turkey|pork|steak|salmon|tuna|shrimp|cod|tilapia|lentil|lentils|tofu|tempeh|protein powder|cottage cheese|greek yogurt|egg|eggs|crab|ham|lamb|chickpea|chickpeas|sausage|bean|beans|edamame|halibut|snapper|trout|mahi)\b/;
 var CU_RX={mexican:/taco|fajita|quesadilla|nacho|burrito|salsa|guacamole|enchilada|tortilla|jalapeno|chipotle|queso|refried/,
  italian:/spaghetti|fettuccine|penne|ziti|linguine|marinara|pesto|bruschetta|caprese|pizza|alfredo|carbonara|bolognese|parmesan|mozzarella|ricotta|risotto|lasagna|gnocchi|italian/,
  indian:/curry|lassi|chai|turmeric|masala|garam/,
  asian:/stir-fry|teriyaki|soy sauce|sesame|fried rice|rice vinegar|hoisin|miso|ramen|lo mein/,
  mediterranean:/greek|hummus|tzatziki|feta|tahini|kalamata|falafel|couscous/};
+var REFINE={asian:[['japanese',/teriyaki|katsu|ramen|miso|yakisoba|edamame|sushi|japanese/],['korean',/bulgogi|bibimbap|kimchi|japchae|gochujang|korean/],['thai',/\bthai\b|pad thai|tom kha|green curry|red curry|sweet chili/],['vietnamese',/banh mi|vietnamese|fresh .*spring roll/],['chinese',/lo mein|orange chicken|general tso|kung pao|sesame chicken|sweet & sour|mongolian|mapo|egg drop|hot & sour|wonton|fried rice|potsticker|beef & broccoli|stir-fry|hoisin|spring roll|yum yum|chinese|stir-fry sauce|sesame/]],
+ mediterranean:[['greek',/greek|gyro|tzatziki|spanakopita|feta/],['middle-eastern',/falafel|hummus|baba|tahini|shakshuka|tabbouleh|couscous/]]};
+var RE_SWEET=/cake|cookie|pie\b|brownie|\bbars?\b|cobbler|crumble|pudding|mousse|flan|ice cream|truffle|cheesecake|tiramisu|panna|brûlée|brulee|churro|crisp|shortcake|kulfi|frosting|buttercream|fudge|sundae|gelato|sorbet|candy|pops\b|bites|donut|doughnut|macaron|tart\b|trifle|baklava|cupcake|sauce$|kheer|custard|jam\b|caramel/;
+var RE_BRK=/muffin|scone|cinnamon roll|bagel|biscuit|banana bread|granola|pancake|waffle|oatmeal|oats\b|danish|croissant|french toast|crepe|toast$|frittata|omelet|omelette|quiche|benedict|hash\b|shakshuka|huevos|chilaquiles|breakfast|brunch|egg muffin|smoothie bowl|parfait|scramble/;
+var RE_LUNCHY=/sandwich|wrap|burger|quesadilla|bowl|taco|sub\b|melt|blt|club|salad|pizza|nachos|burrito|noodle|soup|slider|panini|gyro|hot dog|sloppy/;
+function mealsFor(r){
+  var c=r.c,n=r.n.toLowerCase(),m=[];
+  function add(x){if(m.indexOf(x)<0)m.push(x)}
+  if(c==='Breakfast'||(RE_BRK.test(n)&&c!=='Mains'&&c!=='Drinks'&&c!=='Sauces & Dips'))add('breakfast');
+  if(c==='Desserts'||(c==='Baking'&&RE_SWEET.test(n)&&!RE_BRK.test(n)))add('dessert');
+  if(c==='Snacks'||c==='Appetizers')add('snack');
+  if(c==='Soups'||c==='Salads'){add('lunch');add('dinner')}
+  else if(c==='Mains'||c==='Pasta & Rice'||c==='Seafood'){add('dinner');if(r.t<=35||RE_LUNCHY.test(n))add('lunch')}
+  else if(c==='Sides'){add('dinner');add('lunch')}
+  else if(c==='Baking'&&m.length===0){add('dinner');add('snack')}
+  else if(c==='Snacks'){add('lunch')}
+  return m;
+}
+function toolsFor(r){
+  var steps=r.st.join(' . ').toLowerCase();
+  var txt=(r.n.toLowerCase()+' . '+steps).replace(/baking (powder|soda)/g,'').replace(/instant pot|crock ?pot|pot roast/g,function(m){return m==='pot roast'?'roast':m});
+  var s2=steps.replace(/baking (powder|soda)/g,'').replace(/(baking|sheet|roasting|loaf|cake|pie|muffin|springform|cookie|casserole) (pan|tin|dish)/g,'').replace(/instant pot|crock ?pot|slow cooker/g,'');
+  var t=[];
+  var oven=/\b(oven|bake|baked|baking|broil|broiler|preheat)\b|\broast (for|at|until|in|the|them|it|\d)/.test(txt.replace(/baking (powder|soda)/g,''));
+  var strong=/\b(skillet|saucepan|stockpot|simmer|simmering|boil|boiling|sauté|saute|fry|fried|frying|wok|griddle|stovetop|sear|burner|medium heat|high heat|low heat|medium-high|medium-low)\b/.test(s2);
+  var stove=strong||(!oven&&/\b(pot|pan)\b/.test(s2));
+  var mic=/microwav/.test(steps);
+  var grill=/\bgrill(ed|ing)?\b|barbecue/.test(txt);
+  var grillAlt=/skillet|\bpan\b|broil|oven|stovetop|griddle/.test(txt);
+  if(stove)t.push('stovetop');
+  if(oven)t.push('oven');
+  if(mic&&!stove&&!oven)t.push('microwave');
+  if(/toast (the |your )?(bread|bagels?|muffins?|english|slices|buns|rolls|pita|tortillas)|toasted (bread|bagel)|toaster/.test(steps)&&!oven)t.push('toaster');
+  if(grill&&!grillAlt)t.push('grill');
+  if(/air[- ]fr/.test(txt))t.push('airfryer');
+  if(/slow cooker|crock ?pot/.test(txt))t.push('slowcooker');
+  if(/instant pot|pressure cook/.test(txt))t.push('instantpot');
+  if(/\bblend(er|ed)?\b|immersion/.test(steps))t.push('blender');
+  if(/food processor|\bpulse\b/.test(steps))t.push('processor');
+  return t;
+}
+function toolsOk(r){
+  for(var i=0;i<r.tools.length;i++){
+    var k=r.tools[i];
+    if(ST.tools[k])continue;
+    if(k==='toaster'&&ST.tools.oven)continue;
+    if(k==='blender'&&ST.tools.processor)continue;
+    return false;
+  }
+  return true;
+}
 RECIPES.forEach(function(r){
   var t=r.tags||(r.tags=[]);
   var names=r.ing.map(function(i){return i.n}).join(' ; ').replace(RE_PLANT,'');
   var hay=(r.n+' '+names).toLowerCase();
   function add(x){if(t.indexOf(x)<0)t.push(x)}
-  var hasCuisine=t.some(function(x){return CUIS.indexOf(x)>-1});
-  if(!hasCuisine){var found=false;['mexican','italian','indian','asian','mediterranean'].forEach(function(c){if(!found&&CU_RX[c].test(hay)){add(c);found=true}});if(!found)add('american')}
+  var ALIAS={indonesian:'southeast-asian',malaysian:'southeast-asian',singapore:'southeast-asian',cambodian:'southeast-asian',burmese:'southeast-asian',laotian:'southeast-asian',
+    czech:'polish',russian:'polish',ukrainian:'polish',georgian:'polish',romanian:'polish',hungarian:'polish',balkan:'polish',
+    'south-african':'west-african',nigerian:'west-african',ghanaian:'west-african',tunisian:'moroccan',lebanese:'middle-eastern',persian:'middle-eastern',israeli:'middle-eastern',
+    'tex-mex':'mexican',texmex:'mexican',cuban:'caribbean',jamaican:'caribbean',haitian:'caribbean',argentinian:'latin-american',colombian:'latin-american',venezuelan:'latin-american',
+    dutch:'german',austrian:'german',swiss:'german',portuguese:'spanish','sri-lankan':'indian',nepalese:'indian',pakistani:'indian',bangladeshi:'indian'};
+  t.slice().forEach(function(x){if(ALIAS[x])add(ALIAS[x])});
+  var hasC=t.some(function(x){return CUIS.indexOf(x)>-1});
+  if(!hasC){var found=false;['mexican','italian','indian','asian','mediterranean'].forEach(function(c){if(!found&&CU_RX[c].test(hay)){add(c);found=true}});if(!found)add('american')}
+  ['asian','mediterranean'].forEach(function(par){
+    var kids=par==='asian'?ASIA:MEDI;
+    if(t.indexOf(par)>-1&&!t.some(function(x){return kids.indexOf(x)>-1})){
+      var nm=r.n.toLowerCase();
+      for(var i=0;i<REFINE[par].length;i++){if(REFINE[par][i][1].test(nm)||REFINE[par][i][1].test(hay)){add(REFINE[par][i][0]);break}}
+    }
+  });
+  if(t.some(function(x){return ASIA.indexOf(x)>-1}))add('asian');
+  if(t.some(function(x){return MEDI.indexOf(x)>-1}))add('mediterranean');
   var meat=RE_MEAT.test(names);
   if(!meat){add('vegetarian');if(!RE_ANIMAL.test(names))add('vegan')}
-  if(!meat&&t.indexOf('vegan')>-1&&t.indexOf('vegetarian')<0)add('vegetarian');
-  if(t.indexOf('vegan')>-1&&t.indexOf('vegetarian')<0)add('vegetarian');
+  if(t.indexOf('vegan')>-1)add('vegetarian');
   if(['Desserts','Baking','Drinks','Sauces & Dips'].indexOf(r.c)<0&&RE_PROT.test(names))add('high-protein');
   if(r.t<=30)add('quick');
+  if(!t.some(function(x){return MEALS.indexOf(x)>-1})){mealsFor(r).forEach(add)}
+  r.tools=toolsFor(r);
 });
 var BYNAME={};RECIPES.forEach(function(r){BYNAME[r.n]=r});
 var ALLING=(function(){
@@ -243,15 +355,17 @@ var ALLNAMES=Object.keys(ALLING).sort();
 var COMMON=ALLNAMES.filter(function(n){return PANTRY.indexOf(n)<0}).sort(function(a,b){return ALLING[b]-ALLING[a]}).slice(0,36);
 
 /* ---------- state ---------- */
-var ST={tab:'home',cat:'All',tag:'',lim:50,q:'',fridge:[],favs:[],pantry:true,openId:null,serv:0,ichk:{},schk:{}};
+var ST={tab:'home',cat:'All',meal:'',cui:'',diet:'',toolsOnly:false,kmeal:'',useTools:true,toolsOpen:true,tools:{stovetop:1,oven:1,microwave:1,toaster:1,blender:1,grill:0,airfryer:0,slowcooker:0,instantpot:0,processor:0},lim:50,q:'',fridge:[],favs:[],pantry:true,openId:null,serv:0,ichk:{},schk:{}};
 try{
   var sv=JSON.parse(localStorage.getItem('cookbook_state')||'{}');
   if(sv.fridge)ST.fridge=sv.fridge;
   if(sv.favs)ST.favs=sv.favs;
   if(typeof sv.pantry==='boolean')ST.pantry=sv.pantry;
+  if(sv.tools){for(var tk in sv.tools)ST.tools[tk]=sv.tools[tk]}
+  if(typeof sv.useTools==='boolean')ST.useTools=sv.useTools;
 }catch(e){}
 ST.favs=ST.favs.map(function(f){return typeof f==='number'?(RECIPES[f]?RECIPES[f].n:null):f}).filter(Boolean);
-function save(){try{localStorage.setItem('cookbook_state',JSON.stringify({fridge:ST.fridge,favs:ST.favs,pantry:ST.pantry}))}catch(e){}}
+function save(){try{localStorage.setItem('cookbook_state',JSON.stringify({fridge:ST.fridge,favs:ST.favs,pantry:ST.pantry,tools:ST.tools,useTools:ST.useTools}))}catch(e){}}
 function isFav(id){var r=RECIPES[id];return !!r&&ST.favs.indexOf(r.n)>-1}
 function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove('on')},1600)}
 function buzz(){try{if(navigator.vibrate)navigator.vibrate(8)}catch(e){}}
@@ -277,36 +391,44 @@ function renderHome(){
   var h='<div class="brand"><img class="mark" alt="" src="data:image/png;base64,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" width="42" height="42"><h1>Cookbook</h1></div>'+
    '<p class="sub">'+RECIPES.length+' recipes · meals, sauces, sweets &amp; drinks</p>'+
    '<div class="sbar" role="button" tabindex="0" data-a="goSearch"><span class="ic">🔎</span><span class="fake">Search recipes or ingredients</span></div>'+
-   '<div class="fridgecard" role="button" tabindex="0" data-a="tab" data-v="fridge"><span class="big">🧊</span><div><b>What\'s in your fridge?</b><span>Tell me what you have and I\'ll show what you can make.</span></div></div>'+
+   '<div class="fridgecard" role="button" tabindex="0" data-a="tab" data-v="fridge"><span class="big">🍳</span><div><b>What\'s in your kitchen?</b><span>Tell me your ingredients and cooking tools, and I\'ll show what you can make.</span></div></div>'+
    '<div style="display:flex;gap:10px"><button type="button" class="btn ghost sm" data-a="surprise">🎲 Surprise me</button><button type="button" class="btn ghost sm" data-a="tab" data-v="saved">❤️ Saved ('+ST.favs.length+')</button></div>'+
    '<div class="sec"><h2>Browse by type</h2></div><div class="cats">'+
    CATS.map(function(c){return '<button type="button" class="cat" data-a="cat" data-v="'+esc(c[0])+'"><span class="ce">'+c[1]+'</span><b>'+esc(c[0])+'</b><small>'+(counts[c[0]]||0)+' recipes</small></button>'}).join('')+'</div>'+
-   '<div class="sec"><h2>By cuisine &amp; diet</h2></div><div class="chips">'+TAGCHIPS.map(function(c){return '<button type="button" class="chip" data-a="tagGo" data-v="'+c[0]+'">'+c[1]+'</button>'}).join('')+'</div>'+
+   '<div class="sec"><h2>By meal</h2></div><div class="chips">'+MEALCHIPS.map(function(c){return '<button type="button" class="chip" data-a="filtGo" data-v="meal:'+c[0]+'">'+c[1]+'</button>'}).join('')+'</div>'+
+   '<div class="sec"><h2>World cuisines</h2><small>'+CUISINES.length+'</small></div><div class="chips scroll">'+CUISINES.map(function(c){return '<button type="button" class="chip" data-a="filtGo" data-v="cui:'+c[0]+'">'+c[1]+' '+esc(c[2])+'</button>'}).join('')+'</div>'+
+   '<div class="sec"><h2>By diet</h2></div><div class="chips">'+DIETCHIPS.map(function(c){return '<button type="button" class="chip" data-a="filtGo" data-v="diet:'+c[0]+'">'+c[1]+'</button>'}).join('')+'</div>'+
    '<div class="sec"><h2>Quick &amp; easy</h2><small>20 min or less</small></div><div class="hscroll">'+quick.map(hCard).join('')+'</div>';
   $('s-home').innerHTML=h;
 }
-var TAGCHIPS=[['mexican','🌮 Mexican'],['italian','🍝 Italian'],['asian','🥢 Asian'],['indian','🍛 Indian'],['mediterranean','🫒 Mediterranean'],['american','🍔 American'],['high-protein','💪 High-protein'],['vegetarian','🥦 Vegetarian'],['vegan','🌱 Vegan'],['quick','⚡ Under 30 min']];
 function renderSearch(){
   var h='<div class="brand"><h1>Search</h1></div>'+
    '<div class="sbar"><span class="ic">🔎</span><input id="q" type="search" placeholder="Recipe, ingredient, or cuisine" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" value="'+esc(ST.q)+'"></div>'+
-   '<div class="chips scroll" id="catchips"></div><div class="chips scroll" id="tagchips" style="margin-top:0"></div><div id="sres"></div>';
+   '<div class="chips scroll" id="catchips"></div><div class="chips scroll" id="mealchips" style="margin-top:0"></div><div class="chips scroll" id="cuichips" style="margin-top:0"></div><div class="chips scroll" id="dietchips" style="margin-top:0"></div><div id="sres"></div>';
   $('s-search').innerHTML=h;
   drawCatChips();drawResults();
+}
+function chipRow(items,group,cur){
+  return items.map(function(c){return '<button type="button" class="chip'+(cur===c[0]?' on':'')+'" data-a="filt" data-v="'+group+':'+c[0]+'">'+c[1]+'</button>'}).join('');
 }
 function drawCatChips(){
   var el=$('catchips');if(el){
     var all=[['All','✨']].concat(CATS);
     el.innerHTML=all.map(function(c){return '<button type="button" class="chip'+(ST.cat===c[0]?' on':'')+'" data-a="cat" data-v="'+esc(c[0])+'">'+c[1]+' '+esc(c[0])+'</button>'}).join('');
   }
-  var tg=$('tagchips');if(tg){
-    tg.innerHTML=TAGCHIPS.map(function(c){return '<button type="button" class="chip'+(ST.tag===c[0]?' on':'')+'" data-a="tag" data-v="'+c[0]+'">'+c[1]+'</button>'}).join('');
-  }
+  var m=$('mealchips');if(m)m.innerHTML=chipRow(MEALCHIPS,'meal',ST.meal);
+  var cu=$('cuichips');if(cu)cu.innerHTML=chipRow(CUISINES.map(function(c){return [c[0],c[1]+' '+c[2]]}),'cui',ST.cui);
+  var d=$('dietchips');if(d)d.innerHTML=chipRow(DIETCHIPS,'diet',ST.diet)+'<button type="button" class="chip'+(ST.toolsOnly?' on':'')+'" data-a="toolsonly">🔧 Only my tools</button>';
 }
-function doSearch(q,cat,tag){
+function doSearch(q,cat,f){
+  f=f||{};
   var ts=toks(q),out=[];
   RECIPES.forEach(function(r){
     if(cat!=='All'&&r.c!==cat)return;
-    if(tag){if(tag==='quick'){if(r.t>30)return}else if(r.tags.indexOf(tag)<0)return}
+    if(f.meal&&r.tags.indexOf(f.meal)<0)return;
+    if(f.cui&&r.tags.indexOf(f.cui)<0)return;
+    if(f.diet){if(f.diet==='quick'){if(r.t>30)return}else if(r.tags.indexOf(f.diet)<0)return}
+    if(f.tools&&!toolsOk(r))return;
     var s=0,ok=true;
     for(var k=0;k<ts.length;k++){
       var t=ts[k],m=0;
@@ -326,14 +448,14 @@ function doSearch(q,cat,tag){
 }
 function drawResults(){
   var el=$('sres');if(!el)return;
-  var res=doSearch(ST.q,ST.cat,ST.tag);
+  var res=doSearch(ST.q,ST.cat,{meal:ST.meal,cui:ST.cui,diet:ST.diet,tools:ST.toolsOnly});
   if(!res.length){el.innerHTML='<div class="empty"><span class="big">🤷</span>No recipes found.<br>Try a different word or clear a filter.</div>';return}
   var shown=res.slice(0,ST.lim);
   el.innerHTML='<p class="sub" style="margin-top:6px">'+res.length+' recipe'+(res.length>1?'s':'')+'</p>'+shown.map(function(r){return rowCard(r)}).join('')+
    (res.length>shown.length?'<div style="text-align:center;margin:8px 0 20px"><button type="button" class="btn ghost" data-a="more">Show more ('+(res.length-shown.length)+' left)</button></div>':'');
 }
 
-/* ---------- fridge ---------- */
+/* ---------- kitchen (ingredients + cooking tools) ---------- */
 function itemToks(){return ST.fridge.map(toks).filter(function(t){return t.length})}
 function ingMatch(ing,items){
   return items.some(function(it){
@@ -344,6 +466,8 @@ function fridgeResults(){
   var items=itemToks();if(!items.length)return null;
   var out=[];
   RECIPES.forEach(function(r){
+    if(ST.useTools&&!toolsOk(r))return;
+    if(ST.kmeal&&r.tags.indexOf(ST.kmeal)<0)return;
     var need=r.ing.filter(function(i){return !(ST.pantry&&i.pantry)&&i.q!==''});
     if(!need.length)return;
     var have=[],miss=[];
@@ -358,14 +482,26 @@ function fridgeResults(){
   return out;
 }
 function renderFridge(){
-  var h='<div class="brand"><h1>My Fridge</h1></div><p class="sub">Add what you have. Separate with commas.</p>'+
+  var h='<div class="brand"><h1>My Kitchen</h1></div><p class="sub">Tell me what you cook with and what you have.</p>'+
+   '<div id="ktoolsbox"></div>'+
+   '<div class="sec" style="margin:14px 0 8px"><h2>Ingredients</h2><small>separate with commas</small></div>'+
    '<div style="display:flex;gap:8px"><div class="sbar" style="flex:1"><span class="ic">🥕</span><input id="fi" type="text" placeholder="eggs, milk, chicken..." autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done"></div>'+
    '<button type="button" class="btn" data-a="addTyped" style="padding:0 18px">Add</button></div>'+
    '<div class="chips" id="fsug"></div>'+
    '<div class="chips" id="fchips"></div>'+
-   '<div id="fctl"></div><div id="fres"></div>';
+   '<div id="fctl"></div><div class="chips scroll" id="kmealchips" style="margin-top:8px"></div><div id="fres"></div>';
   $('s-fridge').innerHTML=h;
   drawFridgeTop();drawFridgeRes();
+}
+function drawTools(){
+  var el=$('ktoolsbox');if(!el)return;
+  var on=TOOLS.filter(function(t){return ST.tools[t[0]]}).length;
+  var h='<div class="toolhead" role="button" tabindex="0" data-a="toolsopen"><b>🔧 Cooking tools</b><span>'+on+' of '+TOOLS.length+' on '+(ST.toolsOpen?'▴':'▾')+'</span></div>';
+  if(ST.toolsOpen){
+    h+='<div class="chips">'+TOOLS.map(function(t){return '<button type="button" class="chip'+(ST.tools[t[0]]?' on':'')+'" data-a="tool" data-v="'+t[0]+'">'+t[1]+' '+t[2]+'</button>'}).join('')+'</div>'+
+      '<div class="toggle" role="button" tabindex="0" data-a="usetools"><span class="sw'+(ST.useTools?' on':'')+'"></span><span>Only show recipes I have the tools for</span></div>';
+  }
+  el.innerHTML=h;
 }
 function drawSuggest(){
   var el=$('fsug');if(!el)return;
@@ -380,17 +516,18 @@ function drawSuggest(){
   el.innerHTML=(v||!list.length?'':'<div style="width:100%;color:var(--mute);font-size:13px">Tap to add:</div>')+list.map(function(n){return '<button type="button" class="chip sug" data-a="add" data-v="'+esc(n)+'">+ '+esc(n)+'</button>'}).join('');
 }
 function drawFridgeTop(){
-  drawSuggest();
+  drawTools();drawSuggest();
   var fc=$('fchips');
   fc.innerHTML=ST.fridge.length?ST.fridge.map(function(n,i){return '<button type="button" class="chip have" data-a="rm" data-v="'+i+'">'+esc(n)+' ✕</button>'}).join(''):'';
   $('fctl').innerHTML='<div class="toggle" role="button" tabindex="0" data-a="pantry"><span class="sw'+(ST.pantry?' on':'')+'"></span><span>Assume I have salt, pepper, oil, water, ice &amp; basic spices</span></div>'+
    (ST.fridge.length?'<div style="margin-top:10px"><button type="button" class="btn ghost sm" data-a="clearFridge">Clear all</button></div>':'');
+  var km=$('kmealchips');if(km)km.innerHTML=ST.fridge.length?chipRow(MEALCHIPS,'kmeal',ST.kmeal):'';
 }
 function drawFridgeRes(){
   var el=$('fres');if(!el)return;
   var res=fridgeResults();
-  if(res===null){el.innerHTML='<div class="empty"><span class="big">🧊</span>Your fridge list is empty.<br>Add a few ingredients and matching recipes show up here.</div>';return}
-  if(!res.length){el.innerHTML='<div class="empty"><span class="big">🤔</span>Nothing close yet.<br>Try adding a few more ingredients.</div>';return}
+  if(res===null){el.innerHTML='<div class="empty"><span class="big">🧊</span>No ingredients yet.<br>Add a few and matching recipes show up here.</div>';return}
+  if(!res.length){el.innerHTML='<div class="empty"><span class="big">🤔</span>Nothing close yet.<br>Try adding more ingredients'+(ST.useTools?' or turning on more cooking tools':'')+'.</div>';return}
   var groups=[['Ready to cook now ✅','',res.filter(function(x){return x.miss.length===0})],
               ['Almost there (missing 1–2)','w',res.filter(function(x){return x.miss.length>0&&x.miss.length<=2})],
               ['More ideas','m',res.filter(function(x){return x.miss.length>2})]];
@@ -400,7 +537,7 @@ function drawFridgeRes(){
     h+='<div class="gh '+g[1]+'">'+g[0]+' · '+g[2].length+'</div>';
     g[2].slice(0,25).forEach(function(x){
       var hint='<div class="hint"><span class="y">Have: '+esc(x.have.map(function(i){return i.n}).join(', '))+'</span>'+
-        (x.miss.length?'<br><span class="n">Need: '+esc(x.miss.map(function(i){return i.n}).join(', '))+'</span>':'')+'</div>';
+        (x.miss.length?'<br><span class="n">Missing: '+esc(x.miss.map(function(i){return i.n}).join(', '))+'</span>':'')+'</div>';
       h+=rowCard(x.r,hint);
     });
   });
@@ -449,6 +586,7 @@ function renderDetail(){
    pic(r,'h')+
    '<div class="dbody"><h1>'+esc(r.n)+'</h1>'+
    '<div class="meta"><span>⏱ '+fmtTime(r.t)+'</span><span>'+(CATS.filter(function(c){return c[0]===r.c})[0]||['',''])[1]+' '+esc(r.c)+'</span><span>'+r.ing.length+' ingredients</span></div>'+
+   (r.tools.length?'<div class="meta" style="margin-top:-4px">'+r.tools.map(function(k){return '<span>'+TOOLNAME[k]+'</span>'}).join('')+'</div>':'')+
    '<div class="serv"><b>Servings</b><div class="stepper"><button type="button" class="rb" data-a="servdn" aria-label="Fewer">−</button><span class="n">'+ST.serv+'</span><button type="button" class="rb" data-a="servup" aria-label="More">+</button></div></div>'+
    '<h3>Ingredients</h3><div>'+
    r.ing.map(function(i,k){
@@ -507,10 +645,17 @@ function act(el){
   buzz();
   switch(a){
     case 'tab':if(ST.openId!==null)hideDetail();setTab(v);break;
-    case 'goSearch':ST.cat='All';ST.tag='';ST.lim=50;setTab('search');setTimeout(function(){var q=$('q');if(q)q.focus()},60);break;
-    case 'cat':ST.cat=v;ST.lim=50;if(ST.tab!=='search'){ST.q='';ST.tag='';setTab('search')}else{drawCatChips();drawResults()}break;
-    case 'tag':ST.tag=(ST.tag===v?'':v);ST.lim=50;drawCatChips();drawResults();break;
-    case 'tagGo':ST.tag=v;ST.cat='All';ST.q='';ST.lim=50;setTab('search');break;
+    case 'goSearch':ST.cat='All';ST.meal='';ST.cui='';ST.diet='';ST.lim=50;setTab('search');setTimeout(function(){var q=$('q');if(q)q.focus()},60);break;
+    case 'cat':ST.cat=v;ST.lim=50;if(ST.tab!=='search'){ST.q='';ST.meal='';ST.cui='';ST.diet='';setTab('search')}else{drawCatChips();drawResults()}break;
+    case 'filt':{var p=v.split(':'),g=p[0],val=p[1];
+      if(g==='kmeal'){ST.kmeal=(ST.kmeal===val?'':val);drawFridgeTop();drawFridgeRes()}
+      else{ST[g]=(ST[g]===val?'':val);ST.lim=50;drawCatChips();drawResults()}
+      break}
+    case 'filtGo':{var p2=v.split(':');ST.meal='';ST.cui='';ST.diet='';ST.cat='All';ST.q='';ST.toolsOnly=false;ST[p2[0]]=p2[1];ST.lim=50;setTab('search');break}
+    case 'toolsonly':ST.toolsOnly=!ST.toolsOnly;ST.lim=50;drawCatChips();drawResults();break;
+    case 'tool':ST.tools[v]=ST.tools[v]?0:1;save();drawTools();drawFridgeRes();break;
+    case 'usetools':ST.useTools=!ST.useTools;save();drawTools();drawFridgeRes();break;
+    case 'toolsopen':ST.toolsOpen=!ST.toolsOpen;drawTools();break;
     case 'more':ST.lim+=50;drawResults();break;
     case 'open':openRecipe(+v);break;
     case 'back':closeRecipe();break;
