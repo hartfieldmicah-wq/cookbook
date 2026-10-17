@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFA03C"/>
+      <stop offset="1" stop-color="#E5392B"/>
+    </linearGradient>
+    <linearGradient id="pageL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFF8EC"/>
+      <stop offset="1" stop-color="#FFE9CC"/>
+    </linearGradient>
+    <linearGradient id="pageR" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#FFF8EC"/>
+      <stop offset="1" stop-color="#FFE9CC"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <!-- soft glow -->
+  <circle cx="512" cy="470" r="380" fill="#FFFFFF" opacity="0.10"/>
+  <!-- book cover / shadow -->
+  <path d="M512 835 C440 785 330 770 150 795 L150 485 C330 460 440 475 512 525 C584 475 694 460 874 485 L874 795 C694 770 584 785 512 835 Z" fill="#9E2415" opacity="0.55"/>
+  <!-- pages -->
+  <path d="M512 800 C440 750 330 735 190 760 L190 470 C330 445 440 460 512 510 Z" fill="url(#pageL)"/>
+  <path d="M512 800 C584 750 694 735 834 760 L834 470 C694 445 584 460 512 510 Z" fill="url(#pageR)"/>
+  <!-- spine line -->
+  <path d="M512 510 L512 800" stroke="#E9B98A" stroke-width="6" stroke-linecap="round"/>
+  <!-- text lines -->
+  <g stroke="#F0B27F" stroke-width="14" stroke-linecap="round" fill="none">
+    <path d="M250 540 C330 528 400 538 452 568"/>
+    <path d="M250 600 C330 588 400 598 452 628"/>
+    <path d="M250 660 C330 648 400 658 452 688"/>
+    <path d="M572 568 C624 538 694 528 774 540"/>
+    <path d="M572 628 C624 598 694 588 774 600"/>
+    <path d="M572 688 C624 658 694 648 774 660"/>
+  </g>
+  <!-- chef toque -->
+  <g fill="#FFFFFF">
+    <circle cx="410" cy="285" r="88"/>
+    <circle cx="512" cy="240" r="108"/>
+    <circle cx="614" cy="285" r="88"/>
+    <rect x="404" y="290" width="216" height="105" rx="10"/>
+  </g>
+  <rect x="404" y="372" width="216" height="26" rx="8" fill="#FFD9B0"/>
+  <path d="M470 310 L470 360 M512 300 L512 360 M554 310 L554 360" stroke="#FFD9B0" stroke-width="10" stroke-linecap="round"/>
+</svg>
