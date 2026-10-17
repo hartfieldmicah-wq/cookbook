@@ -167,12 +167,33 @@ input{font:inherit;color:inherit;-webkit-appearance:none;appearance:none;-webkit
 
 <script src="recipes.js"></script>
 <script>
+/* Recipe packs: de-duplicated by name. Optional 8th argument to R() = tags. */
+CATMAP.ap='Appetizers';CATMAP.sf='Seafood';
+var SEEN={};RECIPES.forEach(function(r){SEEN[r.n.toLowerCase()]=1});
+var _R=R;
+R=function(c,n,e,t,s,ing,st,tags){
+  var k=n.toLowerCase();if(SEEN[k])return;SEEN[k]=1;
+  _R(c,n,e,t,s,ing,st);
+  RECIPES[RECIPES.length-1].tags=(tags||'').toLowerCase().split(/\s+/).filter(Boolean);
+};
+</script>
+<script src="pack-01.js"></script>
+<script src="pack-02.js"></script>
+<script src="pack-03.js"></script>
+<script src="pack-04.js"></script>
+<script src="pack-05.js"></script>
+<script src="pack-06.js"></script>
+<script src="pack-07.js"></script>
+<script src="pack-08.js"></script>
+<script src="pack-09.js"></script>
+<script src="pack-10.js"></script>
+<script>
 /* ---------- display settings ---------- */
-var CATS=[['Breakfast','🍳'],['Mains','🍗'],['Pasta & Rice','🍝'],['Soups','🍲'],['Salads','🥗'],['Sides','🥔'],['Sauces & Dips','🫙'],['Snacks','🧀'],['Baking','🍪'],['Desserts','🍰'],['Drinks','🥤']];
+var CATS=[['Breakfast','🍳'],['Mains','🍗'],['Pasta & Rice','🍝'],['Soups','🍲'],['Salads','🥗'],['Sides','🥔'],['Sauces & Dips','🫙'],['Snacks','🧀'],['Baking','🍪'],['Desserts','🍰'],['Appetizers','🥟'],['Seafood','🐟'],['Drinks','🥤']];
 var GR={'Breakfast':['#FFD36E','#FF9A3C'],'Mains':['#FF9966','#E5392B'],'Pasta & Rice':['#FFB86B','#E8742C'],'Soups':['#FF8F6B','#D4503A'],
  'Salads':['#9BE08A','#3FAF5A'],'Sides':['#E6C27A','#C98A3C'],'Sauces & Dips':['#FF8A8A','#C73E5A'],'Snacks':['#FFD76B','#F29B2E'],
- 'Baking':['#E9B98A','#B9733C'],'Desserts':['#FFA6C9','#E0589A'],'Drinks':['#7FD3FF','#4B7BEC']};
-var PANTRY=['salt','black pepper','pepper','water','vegetable oil','olive oil','oil','ice'];
+ 'Baking':['#E9B98A','#B9733C'],'Desserts':['#FFA6C9','#E0589A'],'Appetizers':['#FFC27A','#E36A3B'],'Seafood':['#8FD8E8','#3E8FB8'],'Drinks':['#7FD3FF','#4B7BEC']};
+var PANTRY=['salt','black pepper','pepper','water','vegetable oil','olive oil','oil','ice','cumin','chili powder','paprika','smoked paprika','garlic powder','onion powder','oregano','thyme','cinnamon','red pepper flakes','italian seasoning','cayenne pepper','nutmeg','ginger','white pepper','mustard powder','taco seasoning','bay leaves','cloves'];
 
 /* ============================================================
    ENGINE
@@ -188,6 +209,32 @@ RECIPES.forEach(function(r){
   r.nt=toks(r.n);
   r.ing.forEach(function(i){i.tk=toks(i.n);i.pantry=PANTRY.indexOf(i.n)>-1});
 });
+/* ---------- automatic tags (cuisine, diet, quick) ---------- */
+var CUIS=['mexican','italian','asian','indian','mediterranean','american','french'];
+var RE_MEAT=/\b(chicken|beef|pork|bacon|sausage|ham|turkey|lamb|steak|shrimp|salmon|tuna|fish|crab|clam|clams|anchovy|anchovies|prosciutto|pepperoni|salami|chorizo|brisket|ribs|meatball|duck|veal|cod|tilapia|scallop|lobster|oyster|worcestershire|gelatin|lard|hot dog|canadian bacon|ribeye|sirloin|flank)\b/;
+var RE_ANIMAL=/\b(egg|eggs|milk|butter|cheese|cream|yogurt|honey|mayonnaise|parmesan|mozzarella|ricotta|buttermilk|ghee|whey|ice cream|custard|paneer|mascarpone|marshmallows|yolks|whites)\b/;
+var RE_PLANT=/(coconut|almond|oat|soy|cashew) (milk|cream|yogurt)|peanut butter|cocoa butter|coconut butter|butter bean|butternut|cream of tartar|eggplant/g;
+var RE_PROT=/\b(chicken|beef|turkey|pork|steak|salmon|tuna|shrimp|cod|tilapia|lentil|lentils|tofu|tempeh|protein powder|cottage cheese|greek yogurt|egg|eggs|crab|ham|lamb|chickpea|chickpeas)\b/;
+var CU_RX={mexican:/taco|fajita|quesadilla|nacho|burrito|salsa|guacamole|enchilada|tortilla|jalapeno|chipotle|queso|refried/,
+ italian:/spaghetti|fettuccine|penne|ziti|linguine|marinara|pesto|bruschetta|caprese|pizza|alfredo|carbonara|bolognese|parmesan|mozzarella|ricotta|risotto|lasagna|gnocchi|italian/,
+ indian:/curry|lassi|chai|turmeric|masala|garam/,
+ asian:/stir-fry|teriyaki|soy sauce|sesame|fried rice|rice vinegar|hoisin|miso|ramen|lo mein/,
+ mediterranean:/greek|hummus|tzatziki|feta|tahini|kalamata|falafel|couscous/};
+RECIPES.forEach(function(r){
+  var t=r.tags||(r.tags=[]);
+  var names=r.ing.map(function(i){return i.n}).join(' ; ').replace(RE_PLANT,'');
+  var hay=(r.n+' '+names).toLowerCase();
+  function add(x){if(t.indexOf(x)<0)t.push(x)}
+  var hasCuisine=t.some(function(x){return CUIS.indexOf(x)>-1});
+  if(!hasCuisine){var found=false;['mexican','italian','indian','asian','mediterranean'].forEach(function(c){if(!found&&CU_RX[c].test(hay)){add(c);found=true}});if(!found)add('american')}
+  var meat=RE_MEAT.test(names);
+  if(!meat){add('vegetarian');if(!RE_ANIMAL.test(names))add('vegan')}
+  if(!meat&&t.indexOf('vegan')>-1&&t.indexOf('vegetarian')<0)add('vegetarian');
+  if(t.indexOf('vegan')>-1&&t.indexOf('vegetarian')<0)add('vegetarian');
+  if(['Desserts','Baking','Drinks','Sauces & Dips'].indexOf(r.c)<0&&RE_PROT.test(names))add('high-protein');
+  if(r.t<=30)add('quick');
+});
+var BYNAME={};RECIPES.forEach(function(r){BYNAME[r.n]=r});
 var ALLING=(function(){
   var cnt={};RECIPES.forEach(function(r){r.ing.forEach(function(i){cnt[i.n]=(cnt[i.n]||0)+1})});
   return cnt;
@@ -196,15 +243,16 @@ var ALLNAMES=Object.keys(ALLING).sort();
 var COMMON=ALLNAMES.filter(function(n){return PANTRY.indexOf(n)<0}).sort(function(a,b){return ALLING[b]-ALLING[a]}).slice(0,36);
 
 /* ---------- state ---------- */
-var ST={tab:'home',cat:'All',q:'',fridge:[],favs:[],pantry:true,openId:null,serv:0,ichk:{},schk:{}};
+var ST={tab:'home',cat:'All',tag:'',lim:50,q:'',fridge:[],favs:[],pantry:true,openId:null,serv:0,ichk:{},schk:{}};
 try{
   var sv=JSON.parse(localStorage.getItem('cookbook_state')||'{}');
   if(sv.fridge)ST.fridge=sv.fridge;
   if(sv.favs)ST.favs=sv.favs;
   if(typeof sv.pantry==='boolean')ST.pantry=sv.pantry;
 }catch(e){}
+ST.favs=ST.favs.map(function(f){return typeof f==='number'?(RECIPES[f]?RECIPES[f].n:null):f}).filter(Boolean);
 function save(){try{localStorage.setItem('cookbook_state',JSON.stringify({fridge:ST.fridge,favs:ST.favs,pantry:ST.pantry}))}catch(e){}}
-function isFav(id){return ST.favs.indexOf(id)>-1}
+function isFav(id){var r=RECIPES[id];return !!r&&ST.favs.indexOf(r.n)>-1}
 function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove('on')},1600)}
 function buzz(){try{if(navigator.vibrate)navigator.vibrate(8)}catch(e){}}
 
@@ -233,37 +281,43 @@ function renderHome(){
    '<div style="display:flex;gap:10px"><button type="button" class="btn ghost sm" data-a="surprise">🎲 Surprise me</button><button type="button" class="btn ghost sm" data-a="tab" data-v="saved">❤️ Saved ('+ST.favs.length+')</button></div>'+
    '<div class="sec"><h2>Browse by type</h2></div><div class="cats">'+
    CATS.map(function(c){return '<button type="button" class="cat" data-a="cat" data-v="'+esc(c[0])+'"><span class="ce">'+c[1]+'</span><b>'+esc(c[0])+'</b><small>'+(counts[c[0]]||0)+' recipes</small></button>'}).join('')+'</div>'+
+   '<div class="sec"><h2>By cuisine &amp; diet</h2></div><div class="chips">'+TAGCHIPS.map(function(c){return '<button type="button" class="chip" data-a="tagGo" data-v="'+c[0]+'">'+c[1]+'</button>'}).join('')+'</div>'+
    '<div class="sec"><h2>Quick &amp; easy</h2><small>20 min or less</small></div><div class="hscroll">'+quick.map(hCard).join('')+'</div>';
   $('s-home').innerHTML=h;
 }
+var TAGCHIPS=[['mexican','🌮 Mexican'],['italian','🍝 Italian'],['asian','🥢 Asian'],['indian','🍛 Indian'],['mediterranean','🫒 Mediterranean'],['american','🍔 American'],['high-protein','💪 High-protein'],['vegetarian','🥦 Vegetarian'],['vegan','🌱 Vegan'],['quick','⚡ Under 30 min']];
 function renderSearch(){
   var h='<div class="brand"><h1>Search</h1></div>'+
-   '<div class="sbar"><span class="ic">🔎</span><input id="q" type="search" placeholder="Recipe, ingredient, or type" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" value="'+esc(ST.q)+'"></div>'+
-   '<div class="chips scroll" id="catchips"></div><div id="sres"></div>';
+   '<div class="sbar"><span class="ic">🔎</span><input id="q" type="search" placeholder="Recipe, ingredient, or cuisine" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" value="'+esc(ST.q)+'"></div>'+
+   '<div class="chips scroll" id="catchips"></div><div class="chips scroll" id="tagchips" style="margin-top:0"></div><div id="sres"></div>';
   $('s-search').innerHTML=h;
   drawCatChips();drawResults();
 }
 function drawCatChips(){
-  var el=$('catchips');if(!el)return;
-  var all=[['All','✨']].concat(CATS);
-  el.innerHTML=all.map(function(c){return '<button type="button" class="chip'+(ST.cat===c[0]?' on':'')+'" data-a="cat" data-v="'+esc(c[0])+'">'+c[1]+' '+esc(c[0])+'</button>'}).join('');
+  var el=$('catchips');if(el){
+    var all=[['All','✨']].concat(CATS);
+    el.innerHTML=all.map(function(c){return '<button type="button" class="chip'+(ST.cat===c[0]?' on':'')+'" data-a="cat" data-v="'+esc(c[0])+'">'+c[1]+' '+esc(c[0])+'</button>'}).join('');
+  }
+  var tg=$('tagchips');if(tg){
+    tg.innerHTML=TAGCHIPS.map(function(c){return '<button type="button" class="chip'+(ST.tag===c[0]?' on':'')+'" data-a="tag" data-v="'+c[0]+'">'+c[1]+'</button>'}).join('');
+  }
 }
-function doSearch(q,cat){
+function doSearch(q,cat,tag){
   var ts=toks(q),out=[];
   RECIPES.forEach(function(r){
     if(cat!=='All'&&r.c!==cat)return;
+    if(tag){if(tag==='quick'){if(r.t>30)return}else if(r.tags.indexOf(tag)<0)return}
     var s=0,ok=true;
-    if(ts.length){
-      for(var k=0;k<ts.length;k++){
-        var t=ts[k],m=0;
-        if(r.nt.indexOf(t)>-1)m=100;
-        else if(r.n.toLowerCase().indexOf(t)>-1)m=60;
-        else if(r.ing.some(function(i){return i.tk.indexOf(t)>-1}))m=30;
-        else if(r.ing.some(function(i){return i.n.indexOf(t)>-1}))m=25;
-        else if(r.c.toLowerCase().indexOf(t)>-1)m=20;
-        else{ok=false;break}
-        s+=m;
-      }
+    for(var k=0;k<ts.length;k++){
+      var t=ts[k],m=0;
+      if(r.nt.indexOf(t)>-1)m=100;
+      else if(r.n.toLowerCase().indexOf(t)>-1)m=60;
+      else if(r.ing.some(function(i){return i.tk.indexOf(t)>-1}))m=30;
+      else if(r.ing.some(function(i){return i.n.indexOf(t)>-1}))m=25;
+      else if(r.tags.some(function(x){return x.indexOf(t)>-1}))m=22;
+      else if(r.c.toLowerCase().indexOf(t)>-1)m=20;
+      else{ok=false;break}
+      s+=m;
     }
     if(ok)out.push({r:r,s:s});
   });
@@ -272,9 +326,11 @@ function doSearch(q,cat){
 }
 function drawResults(){
   var el=$('sres');if(!el)return;
-  var res=doSearch(ST.q,ST.cat);
-  if(!res.length){el.innerHTML='<div class="empty"><span class="big">🤷</span>No recipes found.<br>Try a different word, or tap a type above.</div>';return}
-  el.innerHTML='<p class="sub" style="margin-top:6px">'+res.length+' recipe'+(res.length>1?'s':'')+'</p>'+res.map(function(r){return rowCard(r)}).join('');
+  var res=doSearch(ST.q,ST.cat,ST.tag);
+  if(!res.length){el.innerHTML='<div class="empty"><span class="big">🤷</span>No recipes found.<br>Try a different word or clear a filter.</div>';return}
+  var shown=res.slice(0,ST.lim);
+  el.innerHTML='<p class="sub" style="margin-top:6px">'+res.length+' recipe'+(res.length>1?'s':'')+'</p>'+shown.map(function(r){return rowCard(r)}).join('')+
+   (res.length>shown.length?'<div style="text-align:center;margin:8px 0 20px"><button type="button" class="btn ghost" data-a="more">Show more ('+(res.length-shown.length)+' left)</button></div>':'');
 }
 
 /* ---------- fridge ---------- */
@@ -327,7 +383,7 @@ function drawFridgeTop(){
   drawSuggest();
   var fc=$('fchips');
   fc.innerHTML=ST.fridge.length?ST.fridge.map(function(n,i){return '<button type="button" class="chip have" data-a="rm" data-v="'+i+'">'+esc(n)+' ✕</button>'}).join(''):'';
-  $('fctl').innerHTML='<div class="toggle" role="button" tabindex="0" data-a="pantry"><span class="sw'+(ST.pantry?' on':'')+'"></span><span>Assume I have salt, pepper, water, oil &amp; ice</span></div>'+
+  $('fctl').innerHTML='<div class="toggle" role="button" tabindex="0" data-a="pantry"><span class="sw'+(ST.pantry?' on':'')+'"></span><span>Assume I have salt, pepper, oil, water, ice &amp; basic spices</span></div>'+
    (ST.fridge.length?'<div style="margin-top:10px"><button type="button" class="btn ghost sm" data-a="clearFridge">Clear all</button></div>':'');
 }
 function drawFridgeRes(){
@@ -360,7 +416,7 @@ function addItems(txt){
 
 /* ---------- saved ---------- */
 function renderSaved(){
-  var list=ST.favs.map(function(id){return RECIPES[id]}).filter(Boolean);
+  var list=ST.favs.map(function(n){return BYNAME[n]}).filter(Boolean);
   var h='<div class="brand"><h1>Saved</h1></div><p class="sub">'+list.length+' favorite'+(list.length===1?'':'s')+'</p>';
   h+=list.length?list.map(function(r){return rowCard(r)}).join(''):'<div class="empty"><span class="big">🤍</span>Nothing saved yet.<br>Tap the heart on any recipe to keep it here.</div>';
   $('s-saved').innerHTML=h;
@@ -451,13 +507,16 @@ function act(el){
   buzz();
   switch(a){
     case 'tab':if(ST.openId!==null)hideDetail();setTab(v);break;
-    case 'goSearch':ST.cat='All';setTab('search');setTimeout(function(){var q=$('q');if(q)q.focus()},60);break;
-    case 'cat':ST.cat=v;ST.q=ST.tab==='search'?ST.q:'';if(ST.tab!=='search'){setTab('search')}else{drawCatChips();drawResults()}break;
+    case 'goSearch':ST.cat='All';ST.tag='';ST.lim=50;setTab('search');setTimeout(function(){var q=$('q');if(q)q.focus()},60);break;
+    case 'cat':ST.cat=v;ST.lim=50;if(ST.tab!=='search'){ST.q='';ST.tag='';setTab('search')}else{drawCatChips();drawResults()}break;
+    case 'tag':ST.tag=(ST.tag===v?'':v);ST.lim=50;drawCatChips();drawResults();break;
+    case 'tagGo':ST.tag=v;ST.cat='All';ST.q='';ST.lim=50;setTab('search');break;
+    case 'more':ST.lim+=50;drawResults();break;
     case 'open':openRecipe(+v);break;
     case 'back':closeRecipe();break;
     case 'fav':{
-      var id=+v,i=ST.favs.indexOf(id);
-      if(i>-1){ST.favs.splice(i,1);toast('Removed from Saved')}else{ST.favs.push(id);toast('Saved ❤️')}
+      var nm=RECIPES[+v].n,i=ST.favs.indexOf(nm);
+      if(i>-1){ST.favs.splice(i,1);toast('Removed from Saved')}else{ST.favs.push(nm);toast('Saved ❤️')}
       save();
       if(ST.openId!==null)renderDetail();
       refreshCurrent();
@@ -529,7 +588,7 @@ app.addEventListener('keydown',function(e){
 
 /* typing */
 app.addEventListener('input',function(e){
-  if(e.target.id==='q'){ST.q=e.target.value;drawResults()}
+  if(e.target.id==='q'){ST.q=e.target.value;ST.lim=50;drawResults()}
   if(e.target.id==='fi'){drawSuggest()}
 });
 app.addEventListener('keydown',function(e){
